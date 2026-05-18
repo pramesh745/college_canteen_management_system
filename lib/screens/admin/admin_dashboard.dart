@@ -1,4 +1,6 @@
+import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -9,31 +11,32 @@ class AdminDashboardPage extends StatefulWidget {
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
+
   final List<Map<String, dynamic>> dashboardItems = [
     {
-      "title": "Total Orders",
-      "count": "128",
-      "icon": Icons.shopping_cart,
-    },
-    {
-      "title": "Food Items",
-      "count": "42",
-      "icon": Icons.fastfood,
-    },
-    {
-      "title": "Students",
-      "count": "350",
+      "title": "Manage Users",
       "icon": Icons.people,
     },
     {
-      "title": "Revenue",
-      "count": "Rs. 25,000",
+      "title": "Manage Food Items",
+      "icon": Icons.fastfood,
+    },
+    {
+      "title": "View All Orders",
+      "icon": Icons.fastfood_outlined,
+    },
+    {
+      "title": "View Sales Reports",
       "icon": Icons.attach_money,
     },
   ];
 
   @override
   Widget build(BuildContext context) {
+
+
+    final userProvider = Provider.of<AuthnProvider>(context);
+
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -58,8 +61,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               decoration: const BoxDecoration(
                 color: Colors.orange,
               ),
-              accountName: const Text("Admin"),
-              accountEmail: const Text("admin@canteen.com"),
+              accountName: Text(userProvider.fullName ?? ""),
+              accountEmail: Text(userProvider.userEmail ?? ""),
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(
@@ -127,11 +130,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 color: Colors.orange,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: const Column(
+              child:  Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Welcome Admin 👋",
+                  Text("Welcome, ${userProvider.fullName}"
+                    ,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -196,17 +199,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 15),
-
-                        Text(
-                          item["count"],
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 5),
+                        const SizedBox(height: 25),
 
                         Text(
                           item["title"],

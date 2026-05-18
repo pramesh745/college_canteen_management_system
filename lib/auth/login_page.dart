@@ -1,5 +1,13 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/auth/register_page.dart';
+import 'package:college_canteen/screens/admin/admin_dashboard.dart';
+import 'package:college_canteen/screens/staff/staff_dashboard.dart';
+import 'package:college_canteen/screens/student/student_dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,6 +17,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Email
                 TextFormField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
                     prefixIcon: const Icon(Icons.email),
@@ -65,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Password
                 TextFormField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: "Password",
@@ -80,22 +92,75 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   height: 50,
-                  child: ElevatedButton(
-                    onPressed: (){},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                  child: Consumer<AuthnProvider>(
+                    builder: (context, loginProvider, child) =>
+                        loginProvider.isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: () async {
+                              final success = await loginProvider.login(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text.trim(),
+                              );
+                              if (success) {
+                                await loginProvider.loadUserData(
+                                  _emailController.text.trim(),
+                                );
+
+                                String? role = await loginProvider.getUserRole(
+                                  _emailController.text.trim(),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Successfully Logged In"),
+                                  ),
+                                );
+                                if (role == "Admin") {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AdminDashboardPage(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                } else if (role == "Staff") {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => StaffDashboard(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                } else {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => StudentDashboard(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Failed to Login")),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -104,12 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Don't have an account?"),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=> RegisterPage()), (route)=> false);
-                      },
-                      child: const Text("Register"),
-                    ),
+                    Text((" Contact Admin")),
                   ],
                 ),
               ],
