@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(providers: [ChangeNotifierProvider(create: (_)=>AuthnProvider())],
       child: MaterialApp(debugShowCheckedModeBanner: false,
-        home: const RegisterPage(),
+        home: const LoginPage(),
       ),
     );
   }
