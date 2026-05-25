@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:college_canteen/core/auth_secure.dart';
 import 'package:college_canteen/model/get_users_model.dart';
 import 'package:college_canteen/screens/admin/admin_dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,6 +47,7 @@ class AuthnProvider extends ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -93,6 +95,7 @@ class AuthnProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
+      await AuthSecure.saveLoginKey();
       notifyListeners();
       return true;
     } catch (e) {
@@ -117,7 +120,7 @@ class AuthnProvider extends ChangeNotifier {
 
         userList.add(
           GetUsersModel(
-            fullName: data["fullname"] ?? "",
+            fullName: data["fullName"] ?? "",
             email: data["email"] ?? "",
             phone: data["phone"] ?? "",
             role: data["role"] ?? "",
@@ -172,4 +175,8 @@ class AuthnProvider extends ChangeNotifier {
     }
   }
 
+
+  Future<void>logOut()async{
+    await _firebaseAuth.signOut();
+  }
 }
