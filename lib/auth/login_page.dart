@@ -3,13 +3,16 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/auth/register_page.dart';
+import 'package:college_canteen/core/auth_secure.dart';
 import 'package:college_canteen/screens/admin/admin_dashboard.dart';
 import 'package:college_canteen/screens/staff/staff_dashboard.dart';
 import 'package:college_canteen/screens/student/student_dashboard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
+
   const LoginPage({super.key});
 
   @override
@@ -17,6 +20,53 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    checkLoggedIn();
+    super.initState();
+  }
+  
+  void checkLoggedIn()async {
+    final loginProvider = Provider.of<AuthnProvider>(context, listen: false);
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final email = user.email ?? "";
+      await loginProvider.loadUserData(email);
+      String? role = await loginProvider.getUserRole(email);
+      if (!mounted) return;
+
+      if (role == "Admin") {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AdminDashboardPage(),
+          ),
+              (route) => false,
+        );
+      } else if (role == "Staff") {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => StaffDashboard(),
+          ),
+              (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => StudentDashboard(),
+          ),
+              (route) => false,
+        );
+      }
+    }
+
+  }
+  
+  
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 

@@ -1,4 +1,6 @@
 import 'package:college_canteen/auth/authn_provider.dart';
+import 'package:college_canteen/auth/login_page.dart';
+import 'package:college_canteen/core/auth_secure.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,31 +12,15 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-
-
   final List<Map<String, dynamic>> dashboardItems = [
-    {
-      "title": "Manage Users",
-      "icon": Icons.people,
-    },
-    {
-      "title": "Manage Food Items",
-      "icon": Icons.fastfood,
-    },
-    {
-      "title": "View All Orders",
-      "icon": Icons.fastfood_outlined,
-    },
-    {
-      "title": "View Sales Reports",
-      "icon": Icons.attach_money,
-    },
+    {"title": "Manage Users", "icon": Icons.people},
+    {"title": "Manage Food Items", "icon": Icons.fastfood},
+    {"title": "View All Orders", "icon": Icons.fastfood_outlined},
+    {"title": "View Sales Reports", "icon": Icons.attach_money},
   ];
 
   @override
   Widget build(BuildContext context) {
-
-
     final userProvider = Provider.of<AuthnProvider>(context);
 
     final size = MediaQuery.of(context).size;
@@ -47,9 +33,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         elevation: 0,
         title: const Text(
           "Admin Dashboard",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -58,9 +42,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         child: Column(
           children: [
             UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.orange,
-              ),
+              decoration: const BoxDecoration(color: Colors.orange),
               accountName: Text(userProvider.fullName ?? ""),
               accountEmail: Text(userProvider.userEmail ?? ""),
               currentAccountPicture: const CircleAvatar(
@@ -105,13 +87,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
             const Spacer(),
 
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text(
-                "Logout",
-                style: TextStyle(color: Colors.red),
+            Consumer<AuthnProvider>(
+              builder: (context, authnProvider, child) => ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text(
+                  "Logout",
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  authnProvider.logOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => LoginPage()),
+                    (route) => false,
+                  );
+                },
               ),
-              onTap: () {},
             ),
           ],
         ),
@@ -121,7 +112,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
             // Welcome Card
             Container(
               width: double.infinity,
@@ -130,11 +120,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 color: Colors.orange,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child:  Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Welcome, ${userProvider.fullName}"
-                    ,
+                  Text(
+                    "Welcome, ${userProvider.fullName}",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -146,9 +136,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
                   Text(
                     "Manage your college canteen system easily.",
-                    style: TextStyle(
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
@@ -160,15 +148,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Expanded(
               child: GridView.builder(
                 itemCount: dashboardItems.length,
-                gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 15,
                   childAspectRatio: 1.1,
                 ),
                 itemBuilder: (context, index) {
-
                   final item = dashboardItems[index];
 
                   return Container(
@@ -187,11 +173,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
                         CircleAvatar(
                           radius: 28,
-                          backgroundColor:
-                          Colors.orange.withOpacity(0.15),
+                          backgroundColor: Colors.orange.withOpacity(0.15),
                           child: Icon(
                             item["icon"],
                             size: 30,
@@ -203,9 +187,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
                         Text(
                           item["title"],
-                          style: const TextStyle(
-                            color: Colors.grey,
-                          ),
+                          style: const TextStyle(color: Colors.grey),
                         ),
                       ],
                     ),
