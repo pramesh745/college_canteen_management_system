@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
-
   const LoginPage({super.key});
 
   @override
@@ -26,8 +25,9 @@ class _LoginPageState extends State<LoginPage> {
     checkLoggedIn();
     super.initState();
   }
-  
-  void checkLoggedIn()async {
+
+  void checkLoggedIn() async {
+
     final loginProvider = Provider.of<AuthnProvider>(context, listen: false);
 
     final user = FirebaseAuth.instance.currentUser;
@@ -40,33 +40,25 @@ class _LoginPageState extends State<LoginPage> {
       if (role == "Admin") {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (_) => AdminDashboardPage(),
-          ),
-              (route) => false,
+          MaterialPageRoute(builder: (_) => AdminDashboardPage()),
+          (route) => false,
         );
       } else if (role == "Staff") {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (_) => StaffDashboard(),
-          ),
-              (route) => false,
+          MaterialPageRoute(builder: (_) => StaffDashboard()),
+          (route) => false,
         );
       } else {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (_) => StudentDashboard(),
-          ),
-              (route) => false,
+          MaterialPageRoute(builder: (_) => StudentDashboard()),
+          (route) => false,
         );
       }
     }
-
   }
-  
-  
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -147,54 +139,8 @@ class _LoginPageState extends State<LoginPage> {
                         loginProvider.isLoading
                         ? Center(child: CircularProgressIndicator())
                         : ElevatedButton(
-                            onPressed: () async {
-                              final success = await loginProvider.login(
-                                email: _emailController.text.trim(),
-                                password: _passwordController.text.trim(),
-                              );
-                              if (success) {
-                                await loginProvider.loadUserData(
-                                  _emailController.text.trim(),
-                                );
-
-                                String? role = await loginProvider.getUserRole(
-                                  _emailController.text.trim(),
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Successfully Logged In"),
-                                  ),
-                                );
-                                if (role == "Admin") {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => AdminDashboardPage(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                } else if (role == "Staff") {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => StaffDashboard(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                } else {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => StudentDashboard(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Failed to Login")),
-                                );
-                              }
+                            onPressed: () {
+                              loginWidget();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.orange,
@@ -228,5 +174,46 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> loginWidget() async {
+    final loginProvider = Provider.of<AuthnProvider>(context, listen: false);
+    final success = await loginProvider.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+    if (success) {
+      await loginProvider.loadUserData(_emailController.text.trim());
+
+      String? role = await loginProvider.getUserRole(
+        _emailController.text.trim(),
+      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Successfully Logged In")));
+      if (role == "Admin") {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => AdminDashboardPage()),
+          (route) => false,
+        );
+      } else if (role == "Staff") {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => StaffDashboard()),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => StudentDashboard()),
+          (route) => false,
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to Login")));
+    }
   }
 }
