@@ -1,20 +1,22 @@
-import 'package:college_canteen/auth/authn_provider.dart';
-import 'package:college_canteen/auth/login_page.dart';
-import 'package:college_canteen/auth/register_page.dart';
-import 'package:college_canteen/screens/admin/manage_users.dart';
+import 'package:college_canteen/auth/register_role_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AdminDashboardPage extends StatefulWidget {
-  const AdminDashboardPage({super.key});
+import '../../auth/authn_provider.dart';
+import '../../auth/login_page.dart';
+import '../../auth/register_page.dart';
+import 'admin_dashboard.dart';
+
+class ManageUsers extends StatefulWidget {
+  const ManageUsers({super.key});
 
   @override
-  State<AdminDashboardPage> createState() => _AdminDashboardPageState();
+  State<ManageUsers> createState() => _ManageUsersState();
 }
 
-class _AdminDashboardPageState extends State<AdminDashboardPage> {
+class _ManageUsersState extends State<ManageUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,6 +135,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
         ),
       ),
+
       body: GridView(
         padding: EdgeInsets.all(16),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -142,60 +145,51 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           childAspectRatio: 1.1,
         ),
         children: [
-          dashboardCard(
-            icon: Icons.manage_accounts,
-            title: "Manage Users",
+          manageUserCard(
+            icon: Icons.people_alt,
+            title: "View Users",
             onTap: () {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => ManageUsers()),
+                MaterialPageRoute(builder: (_) => RegisterRolePage()),
                 (route) => false,
               );
             },
           ),
-          dashboardCard(
-            icon: Icons.shopping_bag,
-            title: "View All Orders",
-            onTap: () {},
-          ),
-          dashboardCard(
-            icon: Icons.fact_check,
-            title: "Manage Orders",
-            onTap: () {},
-          ),
-          dashboardCard(
-            icon: Icons.fastfood,
-            title: "Manage Food Items",
-            onTap: () {},
-          ),
-          dashboardCard(
-            icon: Icons.receipt_long,
-            title: "View Sales Report",
-            onTap: () {},
+          manageUserCard(
+            icon: Icons.manage_accounts,
+            title: "Add User",
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => RegisterPage()),
+                (route) => false,
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget dashboardCard({
+  Widget manageUserCard({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
   }) {
     return Card(
-      elevation: 4,
+      elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 55, color: Colors.orange),
+            Icon(icon, size: 50, color: Colors.orange),
             SizedBox(height: 12),
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ],
         ),
