@@ -164,6 +164,7 @@ class AuthnProvider extends ChangeNotifier {
 
 
   Future<void> loadUserData(String email) async {
+
     final result = await _firebaseStorage.collection("register_role").where(
         "email", isEqualTo: email).get();
     if(result.docs.isNotEmpty){

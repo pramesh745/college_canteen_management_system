@@ -17,6 +17,18 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    final userProvider = Provider.of<AuthnProvider>(context,listen: false);
+    final email = FirebaseAuth.instance.currentUser?.email??"";
+    userProvider.loadUserData(email);
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
