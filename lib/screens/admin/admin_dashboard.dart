@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/my_widgets.dart';
+
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
 
@@ -19,119 +21,24 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F9),
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications, size: 28),
-          ),
-        ],
-        title: Text(
-          "Admin Dashboard",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.orange,
-      ),
-      drawer: Drawer(
-        child: Consumer<AuthnProvider>(
-          builder: (context, loginProvider, child) => Column(
-            children: [
-              Container(
-                height: 250,
-                width: double.infinity,
-                child: DrawerHeader(
-                  margin: EdgeInsets.zero,
-                  decoration: BoxDecoration(color: Colors.orange),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(radius: 30, backgroundColor: Colors.white),
-                      SizedBox(height: 15),
-                      Text("Pramesh Dahal", style: TextStyle(fontSize: 24)),
-                      Text(
-                        "dahalpramesh32435@gmail.com",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    SizedBox(height: 10),
-                    ListTile(
-                      leading: Icon(Icons.dashboard, size: 28),
-                      title: Text("Dashboard", style: TextStyle(fontSize: 18)),
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AdminDashboardPage(),
-                          ),
-                          (route) => false,
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.person, size: 28),
-                      title: Text("Profile", style: TextStyle(fontSize: 18)),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.people, size: 28),
-                      title: Text(
-                        "Manage Users",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (_) => ManageUsers()),
-                          (route) => false,
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.fastfood, size: 28),
-                      title: Text(
-                        "Manage Food Items",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-              Divider(),
-              ListTile(
-                contentPadding: EdgeInsets.only(bottom: 24, left: 12),
-                leading: Icon(
-                  Icons.exit_to_app,
-                  size: 28,
-                  color: Colors.deepOrangeAccent,
-                ),
-                title: Text(
-                  "Logout",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                ),
-                onTap: () async {
-                  await FirebaseAuth.instance.signOut();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("You've been logged out")),
-                  );
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                    (route) => false,
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+      appBar: MyWidgets.customAppbar(),
+      drawer: MyWidgets.customDrawer(
+        context,
+        firstIcon: Icons.dashboard,
+        secondIcon: Icons.person,
+        thirdIcon: Icons.people,
+        fourthIcon: Icons.emoji_food_beverage,
+        firstTitle: "Dashboard",
+        secondTitle: "Profile",
+        thirdTitle: "Manage Users",
+        fourthTitle: "Manage Food Items",
+        firstOnTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => AdminDashboardPage()));
+        },
+        secondOnTap: () {},
+        thirdOnTap: () {},
+        fourthOnTap: () {},
       ),
       body: GridView(
         padding: EdgeInsets.all(16),
@@ -142,63 +49,38 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           childAspectRatio: 1.1,
         ),
         children: [
-          dashboardCard(
+          MyWidgets.dashboardCard(
             icon: Icons.manage_accounts,
             title: "Manage Users",
             onTap: () {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => ManageUsers()),
-                (route) => false,
+                    (route) => false,
               );
             },
           ),
-          dashboardCard(
+          MyWidgets.dashboardCard(
             icon: Icons.shopping_bag,
             title: "View All Orders",
             onTap: () {},
           ),
-          dashboardCard(
+          MyWidgets.dashboardCard(
             icon: Icons.fact_check,
             title: "Manage Orders",
             onTap: () {},
           ),
-          dashboardCard(
+          MyWidgets.dashboardCard(
             icon: Icons.fastfood,
             title: "Manage Food Items",
             onTap: () {},
           ),
-          dashboardCard(
+          MyWidgets.dashboardCard(
             icon: Icons.receipt_long,
             title: "View Sales Report",
             onTap: () {},
           ),
         ],
-      ),
-    );
-  }
-
-  Widget dashboardCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 55, color: Colors.orange),
-            SizedBox(height: 12),
-            Text(
-              title,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-            ),
-          ],
-        ),
       ),
     );
   }
