@@ -1,6 +1,8 @@
+import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/screens/student/student_dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyWidgets {
   //Created CustomAppBar Widget//
@@ -52,101 +54,105 @@ class MyWidgets {
           bottomRight: Radius.circular(24),
         ),
       ),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(
-              top: 60,
-              left: 20,
-              right: 20,
-              bottom: 20,
-            ),
-            decoration: const BoxDecoration(
-              color: Colors.orange,
-              borderRadius: BorderRadius.only(bottomRight: Radius.circular(30)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                CircleAvatar(
-                  radius: 38,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: Colors.orange),
+      child: Consumer<AuthnProvider>(
+        builder: (context, userProvider, child) => Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(
+                top: 60,
+                left: 20,
+                right: 20,
+                bottom: 20,
+              ),
+              decoration: const BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(30),
                 ),
-
-                SizedBox(height: 15),
-
-                Text(
-                  "Pramesh Dahal",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:  [
+                  CircleAvatar(
+                    radius: 38,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 40, color: Colors.orange),
                   ),
-                ),
 
-                SizedBox(height: 4),
+                  SizedBox(height: 15),
 
-                Text(
-                  "dahalpramesh7@gmail.com",
-                  style: TextStyle(fontSize: 15, color: Colors.white70),
-                ),
-              ],
-            ),
-          ),
+                  Text(
+                    userProvider.fullName?? "",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
 
-          const SizedBox(height: 12),
+                  SizedBox(height: 4),
 
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              children: [
-                _drawerTile(
-                  icon: firstIcon,
-                  title: firstTitle,
-                  onTap: firstOnTap,
-                ),
-
-                _drawerTile(
-                  icon: secondIcon,
-                  title: secondTitle,
-                  onTap: secondOnTap,
-                ),
-
-                _drawerTile(
-                  icon: thirdIcon,
-                  title: thirdTitle,
-                  onTap: thirdOnTap,
-                ),
-
-                _drawerTile(
-                  icon: fourthIcon,
-                  title: fourthTitle,
-                  onTap: fourthOnTap,
-                ),
-              ],
-            ),
-          ),
-
-          const Divider(),
-
-          Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 25),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                  Text(
+                    userProvider.userEmail ?? "",
+                    style: TextStyle(fontSize: 15, color: Colors.white70),
+                  ),
+                ],
               ),
-              tileColor: Colors.red.shade50,
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text(
-                "Logout",
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              onTap: () {},
             ),
-          ),
-        ],
+
+            const SizedBox(height: 12),
+
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: [
+                  _drawerTile(
+                    icon: firstIcon,
+                    title: firstTitle,
+                    onTap: firstOnTap,
+                  ),
+
+                  _drawerTile(
+                    icon: secondIcon,
+                    title: secondTitle,
+                    onTap: secondOnTap,
+                  ),
+
+                  _drawerTile(
+                    icon: thirdIcon,
+                    title: thirdTitle,
+                    onTap: thirdOnTap,
+                  ),
+
+                  _drawerTile(
+                    icon: fourthIcon,
+                    title: fourthTitle,
+                    onTap: fourthOnTap,
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 25),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                tileColor: Colors.red.shade50,
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text(
+                  "Logout",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                onTap: () {},
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
