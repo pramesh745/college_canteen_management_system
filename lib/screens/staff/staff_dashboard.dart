@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../admin/profile_page.dart';
+import '../widgets/my_widgets.dart';
+
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
 
@@ -13,13 +16,78 @@ class StaffDashboard extends StatefulWidget {
 class _StaffDashboardState extends State<StaffDashboard> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text("Welcome to staff Dashboard"),
-        Consumer<AuthnProvider>(builder: (context, loginProvider, child)=>
-          IconButton(onPressed: () {
-            loginProvider.logOut();
-          }, icon: Icon(Icons.logout)),
-        )],));
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F6F9),
+      appBar: MyWidgets.customAppbar(),
+      drawer: MyWidgets.customDrawer(
+        context,
+        firstIcon: Icons.dashboard,
+        secondIcon: Icons.person,
+        thirdIcon: Icons.people,
+        fourthIcon: Icons.emoji_food_beverage,
+        firstTitle: "Dashboard",
+        secondTitle: "Profile",
+        thirdTitle: "Manage Users",
+        fourthTitle: "Manage Food Items",
+        firstOnTap: () {
+          Navigator.pop(context);
+        },
+        secondOnTap: () {},
+        thirdOnTap: () {},
+        fourthOnTap: () {},
+      ),
+      drawerScrimColor: Colors.grey,
+      body: GridView(
+        padding: EdgeInsets.all(16),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.1,
+        ),
+        children: [
+          MyWidgets.dashboardCard(
+            icon: Icons.receipt_long,
+            title: "Live Orders",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.pending_actions,
+            title: "Pending Orders",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.restaurant,
+            title: "Preparing Orders",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.notifications_active,
+            title: "Ready for Pickup",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.check_circle,
+            title: "Completed Orders",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.fastfood,
+            title: "Manage Food Availability",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.trending_up,
+            title: "Popular Food Items",
+            onTap: () {},
+          ),
+          MyWidgets.dashboardCard(
+            icon: Icons.attach_money,
+            title: "Today's Sales",
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
   }
 }

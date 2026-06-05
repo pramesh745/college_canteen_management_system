@@ -1,5 +1,10 @@
 import 'package:college_canteen/auth/authn_provider.dart';
+import 'package:college_canteen/auth/login_page.dart';
+import 'package:college_canteen/screens/admin/admin_dashboard.dart';
+import 'package:college_canteen/screens/admin/manage_users.dart';
+import 'package:college_canteen/screens/admin/profile_page.dart';
 import 'package:college_canteen/screens/student/student_dashboard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +78,7 @@ class MyWidgets {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children:  [
+                children: [
                   CircleAvatar(
                     radius: 38,
                     backgroundColor: Colors.white,
@@ -83,7 +88,7 @@ class MyWidgets {
                   SizedBox(height: 15),
 
                   Text(
-                    userProvider.fullName?? "",
+                    userProvider.fullName ?? "",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -148,7 +153,14 @@ class MyWidgets {
                   "Logout",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                onTap: () {},
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => LoginPage()),
+                    (route) => false,
+                  );
+                },
               ),
             ),
           ],
@@ -186,21 +198,55 @@ class MyWidgets {
     required String title,
     required VoidCallback onTap,
   }) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return Material(
+      color: Colors.transparent,
       child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        splashColor: Colors.orange.withOpacity(0.18),
+        highlightColor: Colors.orange.withOpacity(0.10),
         onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 55, color: Colors.orange),
-            SizedBox(height: 12),
-            Text(
-              title,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Colors.orange.withOpacity(0.02)],
             ),
-          ],
+            border: Border.all(color: Colors.orange.withOpacity(0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 42, color: Colors.orange.shade700),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade800,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

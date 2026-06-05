@@ -2,6 +2,7 @@ import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/auth/login_page.dart';
 import 'package:college_canteen/auth/register_page.dart';
 import 'package:college_canteen/screens/admin/manage_users.dart';
+import 'package:college_canteen/screens/admin/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,17 +18,14 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-
   @override
   void initState() {
     // TODO: implement initState
-    final userProvider = Provider.of<AuthnProvider>(context,listen: false);
-    final email = FirebaseAuth.instance.currentUser?.email??"";
+    final userProvider = Provider.of<AuthnProvider>(context, listen: false);
+    final email = FirebaseAuth.instance.currentUser?.email ?? "";
     userProvider.loadUserData(email);
     super.initState();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +43,31 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         thirdTitle: "Manage Users",
         fourthTitle: "Manage Food Items",
         firstOnTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (_) => AdminDashboardPage()));
+          Navigator.pop(context);
         },
-        secondOnTap: () {},
-        thirdOnTap: () {},
-        fourthOnTap: () {},
+        secondOnTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ProfilePage()),
+          );
+        },
+        thirdOnTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ManageUsers()),
+          );
+        },
+        fourthOnTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ManageUsers()),
+          );
+        },
       ),
+      drawerScrimColor: Colors.grey,
       body: GridView(
         padding: EdgeInsets.all(16),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -65,10 +81,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             icon: Icons.manage_accounts,
             title: "Manage Users",
             onTap: () {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => ManageUsers()),
-                    (route) => false,
               );
             },
           ),
