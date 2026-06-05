@@ -1,7 +1,10 @@
 import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/auth/login_page.dart';
 import 'package:college_canteen/auth/register_role_page.dart';
+import 'package:college_canteen/screens/admin/profile_page.dart';
+import 'package:college_canteen/screens/widgets/my_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +22,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -29,131 +31,56 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F9),
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications, size: 28),
-          ),
-        ],
-        title: Text(
-          "Admin Dashboard",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.orange,
-      ),
-      drawer: Drawer(
-        child: Consumer<AuthnProvider>(
-          builder: (context, loginProvider, child) => Column(
-            children: [
-              Container(
-                height: 250,
-                width: double.infinity,
-                child: DrawerHeader(
-                  margin: EdgeInsets.zero,
-                  decoration: BoxDecoration(color: Colors.orange),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(radius: 30, backgroundColor: Colors.white),
-                      SizedBox(height: 15),
-                      Text("Pramesh Dahal", style: TextStyle(fontSize: 24)),
-                      Text(
-                        "dahalpramesh32435@gmail.com",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    SizedBox(height: 10),
-                    ListTile(
-                      leading: Icon(Icons.dashboard, size: 28),
-                      title: Text("Dashboard", style: TextStyle(fontSize: 18)),
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AdminDashboardPage(),
-                          ),
-                              (route) => false,
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.person, size: 28),
-                      title: Text("Profile", style: TextStyle(fontSize: 18)),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.people, size: 28),
-                      title: Text(
-                        "Manage Users",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ManageUsers(),
-                          ),
-                              (route) => false,
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.fastfood, size: 28),
-                      title: Text(
-                        "Manage Food Items",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-              Divider(),
-              ListTile(
-                contentPadding: EdgeInsets.only(bottom: 24, left: 12),
-                leading: Icon(
-                  Icons.exit_to_app,
-                  size: 28,
-                  color: Colors.deepOrangeAccent,
-                ),
-                title: Text(
-                  "Logout",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                ),
-                onTap: () async {
-                  await FirebaseAuth.instance.signOut();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("You've been logged out")),
-                  );
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                        (route) => false,
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+      appBar: MyWidgets.customAppbar(),
+      drawerScrimColor: Colors.grey,
+      drawer: MyWidgets.customDrawer(
+        context,
+        firstIcon: Icons.dashboard,
+        secondIcon: Icons.person,
+        thirdIcon: Icons.people,
+        fourthIcon: Icons.emoji_food_beverage,
+        firstTitle: "Dashboard",
+        secondTitle: "Profile",
+        thirdTitle: "Manage Users",
+        fourthTitle: "Manage Food Items",
+        firstOnTap: () {
+          Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => AdminDashboardPage()),
+            (route) => false,
+          );
+        },
+        secondOnTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ProfilePage()),
+          );
+        },
+        thirdOnTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ManageUsers()),
+          );
+        },
+        fourthOnTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ManageUsers()),
+          );
+        },
       ),
       body: registerContainer(context),
+
     );
   }
-  Widget registerContainer(BuildContext context){
 
+  Widget registerContainer(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Center(
       child: SingleChildScrollView(
@@ -231,53 +158,50 @@ class _RegisterPageState extends State<RegisterPage> {
                 height: 50,
                 child: Consumer<AuthnProvider>(
                   builder: (context, registerProvider, child) =>
-                  registerProvider.isLoading
+                      registerProvider.isLoading
                       ? Center(child: CircularProgressIndicator())
                       : ElevatedButton(
-                    onPressed: () async {
-                      final success = await registerProvider
-                          .registerUser(
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text.trim(),
-                      );
-                      if (success) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "User registered Successfully",
+                          onPressed: () async {
+                            final success = await registerProvider.registerUser(
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim(),
+                            );
+                            if (success) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("User registered Successfully"),
+                                ),
+                              );
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RegisterRolePage(),
+                                ),
+                                (route) => false,
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Failed to Register user"),
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                        );
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => RegisterRolePage(),
+                          child: const Text(
+                            "Register",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                              (route) => false,
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Failed to Register user"),
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      "Register",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                        ),
                 ),
               ),
             ],
@@ -287,5 +211,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-
-
