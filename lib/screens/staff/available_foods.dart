@@ -5,48 +5,42 @@ import 'package:provider/provider.dart';
 
 import '../widgets/my_widgets.dart';
 
-class StudentDashboard extends StatefulWidget {
-  const StudentDashboard({super.key});
+class AvailableFoods extends StatefulWidget {
+  const AvailableFoods({super.key});
 
   @override
-  State<StudentDashboard> createState() => _StudentDashboardState();
+  State<AvailableFoods> createState() => _AvailableFoodsState();
 }
 
-class _StudentDashboardState extends State<StudentDashboard> {
+class _AvailableFoodsState extends State<AvailableFoods> {
   @override
   void initState() {
     // TODO: implement initState
-    Provider.of<ManageFoodProvider>(context, listen: false).getAllFoods();
-    super.initState();
-  }
 
-  final List<Map<String, dynamic>> foodItems = [
-    {"name": "Chicken Mo:Mo", "price": 180, "icon": Icons.ramen_dining},
-    {"name": "Burger", "price": 150, "icon": Icons.lunch_dining},
-    {"name": "Chowmein", "price": 120, "icon": Icons.restaurant},
-    {"name": "Pizza", "price": 250, "icon": Icons.local_pizza},
-    {"name": "Cold Drink", "price": 50, "icon": Icons.local_drink},
-    {"name": "French Fries", "price": 100, "icon": Icons.fastfood},
-  ];
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ManageFoodProvider>(context, listen: false).getAllFoods();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F9),
       appBar: MyWidgets.customAppbar(),
-
-      // Your drawer here
       drawer: MyWidgets.customDrawer(
         context,
         firstIcon: Icons.dashboard,
         secondIcon: Icons.person,
-        thirdIcon: Icons.shopping_cart,
-        fourthIcon: Icons.receipt_long,
+        thirdIcon: Icons.people,
+        fourthIcon: Icons.emoji_food_beverage,
         firstTitle: "Dashboard",
         secondTitle: "Profile",
-        thirdTitle: "Cart",
-        fourthTitle: "My Orders",
-        firstOnTap: () => Navigator.pop(context),
+        thirdTitle: "Manage Users",
+        fourthTitle: "Manage Food Items",
+        firstOnTap: () {
+          Navigator.pop(context);
+        },
         secondOnTap: () {},
         thirdOnTap: () {},
         fourthOnTap: () {},
@@ -67,7 +61,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "What would you like to eat today?",
+                  "Available food items",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -76,7 +70,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  "Order your favorite meals quickly.",
+                  "Manage all listed meals from here.",
                   style: TextStyle(color: Colors.white70),
                 ),
               ],
@@ -119,7 +113,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.65, // was 0.85
+                    childAspectRatio: 0.55, // was 0.85
                   ),
                   itemBuilder: (context, index) {
                     final food = manageFoodProvider.allFoodsList[index];
@@ -173,10 +167,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               ),
                             ),
 
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
 
                             Text(
                               "${food.description}",
+                              maxLines: 1,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -184,16 +179,32 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               ),
                             ),
 
-                            const SizedBox(height: 18),
+                            const SizedBox(height: 16),
+
                             SizedBox(
+                              height: 34,
                               width: double.infinity,
                               child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // Add order logic
-                                },
-                                icon: const Icon(Icons.shopping_cart),
-                                label: const Text("Order"),
+                                onPressed: () {},
+                                icon: const Icon(Icons.edit),
+                                label: const Text("Edit"),
                                 style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: () {},
+                                icon: const Icon(Icons.remove_circle),
+                                label: const Text("Remove"),
+                                style: OutlinedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),

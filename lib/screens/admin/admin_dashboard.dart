@@ -74,7 +74,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 1.1,
+          childAspectRatio: 1.15,
         ),
         children: [
           MyWidgets.dashboardCard(

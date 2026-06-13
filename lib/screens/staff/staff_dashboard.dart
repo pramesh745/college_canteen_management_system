@@ -1,4 +1,5 @@
 import 'package:college_canteen/auth/authn_provider.dart';
+import 'package:college_canteen/screens/staff/available_foods.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,9 +74,28 @@ class _StaffDashboardState extends State<StaffDashboard> {
           ),
           MyWidgets.dashboardCard(
             icon: Icons.fastfood,
-            title: "Manage Food Availability",
-            onTap: () {},
+            title: "Add Food",
+            onTap: () async {
+              final success = await MyWidgets.showAddFoodDialog(context);
+              if (success == true && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Food Item added successfully")),
+                );
+              }
+            },
           ),
+
+          MyWidgets.dashboardCard(
+            icon: Icons.food_bank,
+            title: "Available Foods",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => AvailableFoods()),
+              );
+            },
+          ),
+
           MyWidgets.dashboardCard(
             icon: Icons.trending_up,
             title: "Popular Food Items",

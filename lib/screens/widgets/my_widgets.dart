@@ -3,6 +3,7 @@ import 'package:college_canteen/auth/login_page.dart';
 import 'package:college_canteen/screens/admin/admin_dashboard.dart';
 import 'package:college_canteen/screens/admin/manage_users.dart';
 import 'package:college_canteen/screens/admin/profile_page.dart';
+import 'package:college_canteen/screens/staff/manage_food_provider.dart';
 import 'package:college_canteen/screens/student/student_dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,18 +17,9 @@ class MyWidgets {
       actions: [
         IconButton(onPressed: () {}, icon: Icon(Icons.notifications, size: 28)),
       ],
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            "Welcome,",
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
-          ),
-          Text(
-            " Username",
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-          ),
-        ],
+      title: Text(
+        "College Canteen",
+        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
       ),
       centerTitle: true,
       backgroundColor: Color(0xFFF4F6F9),
@@ -153,8 +145,8 @@ class MyWidgets {
                   "Logout",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (_) => LoginPage()),
@@ -201,18 +193,13 @@ class MyWidgets {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        splashColor: Colors.orange.withOpacity(0.18),
-        highlightColor: Colors.orange.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(22),
         onTap: onTap,
         child: Container(
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, Colors.orange.withOpacity(0.02)],
-            ),
+            borderRadius: BorderRadius.circular(22),
+            color: Colors.white,
             border: Border.all(color: Colors.orange.withOpacity(0.08)),
             boxShadow: [
               BoxShadow(
@@ -222,31 +209,143 @@ class MyWidgets {
               ),
             ],
           ),
-          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Icon container (clean elevated look)
               Container(
-                padding: const EdgeInsets.all(14),
+                height: 58,
+                width: 58,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.12),
                   shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.orange.withOpacity(0.18),
+                      Colors.orange.withOpacity(0.06),
+                    ],
+                  ),
                 ),
-                child: Icon(icon, size: 42, color: Colors.orange.shade700),
+                child: Icon(icon, size: 28, color: Colors.orange.shade700),
               ),
-              const SizedBox(height: 14),
+
+              const SizedBox(height: 12),
+
+              // Title
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14.5,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade800,
-                  letterSpacing: 0.2,
+                  height: 1.2,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // subtle action hint
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.10),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "Tap to open",
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: Colors.orange.shade700,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  //Widget for popup action when clicked on dashboard items//
+
+  static Future<bool?> showAddFoodDialog(BuildContext context) {
+    final foodNameController = TextEditingController();
+    final foodPriceController = TextEditingController();
+    final foodDescriptionController = TextEditingController();
+
+    return showDialog<bool?>(
+      context: context,
+      builder: (context) => Consumer<ManageFoodProvider>(
+        builder: (context, manageFoodProvider, child) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text("Add Food Item"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: CircleAvatar(
+                    radius: 40,
+                    child: Icon(Icons.add_a_photo, size: 30),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: foodNameController,
+                  decoration: InputDecoration(
+                    labelText: "Food Name",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+                TextField(
+                  controller: foodPriceController,
+                  decoration: InputDecoration(
+                    labelText: "Price",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+                TextField(
+                  controller: foodDescriptionController,
+                  decoration: InputDecoration(
+                    labelText: "Description",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: manageFoodProvider.isLoading
+                  ? null
+                  : () async {
+                      final success = await manageFoodProvider.postManageFood(
+                        foodName: foodNameController.text.trim(),
+                        price: foodPriceController.text.trim(),
+                        description: foodDescriptionController.text.trim(),
+                      );
+                      if (success && context.mounted) {
+                        Navigator.pop(context, true);
+                      }
+                    },
+              child: const Text("Save"),
+            ),
+          ],
         ),
       ),
     );
