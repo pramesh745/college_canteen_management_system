@@ -151,7 +151,7 @@ class _AvailableFoodsState extends State<AvailableFoods> {
                               food.foodName.toString(),
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -171,9 +171,8 @@ class _AvailableFoodsState extends State<AvailableFoods> {
 
                             Text(
                               "${food.description}",
-                              maxLines: 1,
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.orange,
                               ),

@@ -18,7 +18,7 @@ class ManageFoodProvider extends ChangeNotifier {
 
   Future<bool> postManageFood({
     required String foodName,
-    required String price,
+    required double price,
     required String description,
   }) async {
     _isLoading = true;
@@ -62,6 +62,34 @@ class ManageFoodProvider extends ChangeNotifier {
       return true;
     } on FirebaseException catch (e) {
       _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> postOrderFood({
+    required String foodName,
+    required double quantity,
+    required double price,
+    required String email,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _firebaseStorage.collection("order_food").add({
+        "email":email,
+        "foodName": foodName,
+        "quantity": quantity,
+        "price": price,
+      });
+      notifyListeners();
+      return true;
+    } on FirebaseException catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
       return false;
     } finally {
       _isLoading = false;
