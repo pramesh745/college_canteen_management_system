@@ -336,7 +336,7 @@ class MyWidgets {
                   : () async {
                       final success = await manageFoodProvider.postManageFood(
                         foodName: foodNameController.text.trim(),
-                        price: foodPriceController.text.trim(),
+                        price: double.parse(foodPriceController.text.trim()),
                         description: foodDescriptionController.text.trim(),
                       );
                       if (success && context.mounted) {
@@ -344,6 +344,108 @@ class MyWidgets {
                       }
                     },
               child: const Text("Save"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Future<bool?> showOrderFoodDialog(
+    BuildContext context, {
+    required String foodName,
+    required double price,
+  }) {
+    final foodNameController = TextEditingController(text: foodName);
+    final totalPriceController = TextEditingController(text: price.toString());
+    final foodQuantityController = TextEditingController();
+    final email = FirebaseAuth.instance.currentUser?.email ?? "";
+
+
+    return showDialog<bool?>(
+      context: context,
+      builder: (context) => Consumer<ManageFoodProvider>(
+        builder: (context, manageFoodProvider, child) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text("Place an order"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: CircleAvatar(
+                    radius: 40,
+                    child: Icon(Icons.add_a_photo, size: 30),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  readOnly: true,
+                  controller: foodNameController,
+                  decoration: const InputDecoration(
+                    labelText: "Food Name",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+                TextField(
+                  controller: foodQuantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Quantity",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    final quantity = double.tryParse(value) ?? 0;
+                    totalPriceController.text = (price * quantity)
+                        .toStringAsFixed(2);
+                  },
+                ),
+
+                const SizedBox(height: 12),
+                TextField(
+                  controller: totalPriceController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Total Price",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: manageFoodProvider.isLoading
+                  ? null
+                  : () async {
+                      final success = await manageFoodProvider.postOrderFood(
+                        foodName: foodNameController.text.trim(),
+                        quantity: double.parse(
+                          foodQuantityController.text.trim(),
+                        ),
+                        price:
+                            double.tryParse(totalPriceController.text.trim()) ??
+                            0.0, email: email,
+                      );
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context, true);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("$foodName Successfully ordered"),
+                          ),
+                        );
+                      }
+                    },
+              child: const Text("Order"),
             ),
           ],
         ),

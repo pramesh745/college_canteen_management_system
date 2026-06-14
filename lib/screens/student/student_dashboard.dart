@@ -112,99 +112,129 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   return const Center(child: Text("No food items available"));
                 }
 
-                return GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: manageFoodProvider.allFoodsList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.65, // was 0.85
-                  ),
-                  itemBuilder: (context, index) {
-                    final food = manageFoodProvider.allFoodsList[index];
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await manageFoodProvider.getAllFoods();
+                  },
+                  child: GridView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: manageFoodProvider.allFoodsList.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.55, // was 0.85
+                        ),
+                    itemBuilder: (context, index) {
+                      final food = manageFoodProvider.allFoodsList[index];
 
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 32,
-                              backgroundColor: Colors.orange.withOpacity(0.15),
-                              child: Icon(
-                                Icons.eighteen_mp,
-                                size: 35,
-                                color: Colors.orange,
-                              ),
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            Text(
-                              food.foodName.toString(),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-
-                            const SizedBox(height: 8),
-
-                            Text(
-                              "Rs. ${food.price}",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange,
-                              ),
-                            ),
-
-                            const SizedBox(height: 8),
-
-                            Text(
-                              "${food.description}",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange,
-                              ),
-                            ),
-
-                            const SizedBox(height: 18),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // Add order logic
-                                },
-                                icon: const Icon(Icons.shopping_cart),
-                                label: const Text("Order"),
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                      ),
-                    );
-                  },
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 32,
+                                backgroundColor: Colors.orange.withOpacity(
+                                  0.15,
+                                ),
+                                child: Icon(
+                                  Icons.eighteen_mp,
+                                  size: 35,
+                                  color: Colors.orange,
+                                ),
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              Text(
+                                food.foodName.toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Text(
+                                "Rs. ${food.price}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Text(
+                                "${food.description}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+
+                              const SizedBox(height: 18),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    MyWidgets.showOrderFoodDialog(
+                                      context,
+                                      foodName: food.foodName ?? "",
+                                      price:
+                                          double.tryParse(food.price ?? "0") ??
+                                          0.0,
+                                    );
+                                  },
+                                  icon: const Icon(Icons.shopping_bag),
+                                  label: const Text("Order"),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    // Add order logic
+                                  },
+                                  icon: const Icon(Icons.shopping_cart),
+                                  label: const Text("Add to Cart"),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
