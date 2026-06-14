@@ -1,9 +1,10 @@
 import 'package:college_canteen/screens/staff/manage_food_provider.dart';
+import 'package:college_canteen/screens/student/my_orders.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/my_widgets.dart';
+import '../../widgets/my_widgets.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -19,15 +20,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
     Provider.of<ManageFoodProvider>(context, listen: false).getAllFoods();
     super.initState();
   }
-
-  final List<Map<String, dynamic>> foodItems = [
-    {"name": "Chicken Mo:Mo", "price": 180, "icon": Icons.ramen_dining},
-    {"name": "Burger", "price": 150, "icon": Icons.lunch_dining},
-    {"name": "Chowmein", "price": 120, "icon": Icons.restaurant},
-    {"name": "Pizza", "price": 250, "icon": Icons.local_pizza},
-    {"name": "Cold Drink", "price": 50, "icon": Icons.local_drink},
-    {"name": "French Fries", "price": 100, "icon": Icons.fastfood},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +41,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
         firstOnTap: () => Navigator.pop(context),
         secondOnTap: () {},
         thirdOnTap: () {},
-        fourthOnTap: () {},
+        fourthOnTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => MyOrders()),
+          );
+        },
       ),
 
       body: Column(

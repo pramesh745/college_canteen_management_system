@@ -2,7 +2,6 @@ import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/auth/login_page.dart';
 import 'package:college_canteen/auth/register_role_page.dart';
 import 'package:college_canteen/screens/admin/profile_page.dart';
-import 'package:college_canteen/screens/widgets/my_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../screens/admin/admin_dashboard.dart';
 import '../screens/admin/manage_users.dart';
+import '../widgets/my_widgets.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

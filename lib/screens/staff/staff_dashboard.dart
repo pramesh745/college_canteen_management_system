@@ -3,9 +3,9 @@ import 'package:college_canteen/screens/staff/available_foods.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../widgets/my_widgets.dart';
 import '../admin/profile_page.dart';
-import '../widgets/my_widgets.dart';
+
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
