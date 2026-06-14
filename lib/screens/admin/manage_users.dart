@@ -1,6 +1,5 @@
 import 'package:college_canteen/auth/register_role_page.dart';
 import 'package:college_canteen/screens/admin/profile_page.dart';
-import 'package:college_canteen/screens/widgets/my_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../auth/authn_provider.dart';
 import '../../auth/login_page.dart';
 import '../../auth/register_page.dart';
+import '../../widgets/my_widgets.dart';
 import 'admin_dashboard.dart';
 
 class ManageUsers extends StatefulWidget {

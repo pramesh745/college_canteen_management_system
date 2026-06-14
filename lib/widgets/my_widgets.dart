@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_canteen/auth/authn_provider.dart';
 import 'package:college_canteen/auth/login_page.dart';
 import 'package:college_canteen/screens/admin/admin_dashboard.dart';
@@ -361,7 +362,6 @@ class MyWidgets {
     final foodQuantityController = TextEditingController();
     final email = FirebaseAuth.instance.currentUser?.email ?? "";
 
-
     return showDialog<bool?>(
       context: context,
       builder: (context) => Consumer<ManageFoodProvider>(
@@ -422,30 +422,34 @@ class MyWidgets {
               onPressed: () => Navigator.pop(context, false),
               child: const Text("Cancel"),
             ),
-            ElevatedButton(
-              onPressed: manageFoodProvider.isLoading
-                  ? null
-                  : () async {
-                      final success = await manageFoodProvider.postOrderFood(
-                        foodName: foodNameController.text.trim(),
-                        quantity: double.parse(
-                          foodQuantityController.text.trim(),
-                        ),
-                        price:
-                            double.tryParse(totalPriceController.text.trim()) ??
-                            0.0, email: email,
-                      );
-
-                      if (success && context.mounted) {
-                        Navigator.pop(context, true);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("$foodName Successfully ordered"),
+            Consumer<AuthnProvider>(builder: (context, userProvider, child)=>
+              ElevatedButton(
+                onPressed: manageFoodProvider.isLoading
+                    ? null
+                    : () async {
+                        final success = await manageFoodProvider.postOrderFood(
+                          foodName: foodNameController.text.trim(),
+                          quantity: double.parse(
+                            foodQuantityController.text.trim(),
                           ),
+                          price:
+                              double.tryParse(totalPriceController.text.trim()) ??
+                              0.0,
+                          email: email,
+                          fullName: userProvider.fullName ?? "",
                         );
-                      }
-                    },
-              child: const Text("Order"),
+
+                        if (success && context.mounted) {
+                          Navigator.pop(context, true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("$foodName Successfully ordered"),
+                            ),
+                          );
+                        }
+                      },
+                child: const Text("Order"),
+              ),
             ),
           ],
         ),

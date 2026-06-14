@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/my_widgets.dart';
+import '../../widgets/my_widgets.dart';
+
 
 class AvailableFoods extends StatefulWidget {
   const AvailableFoods({super.key});
